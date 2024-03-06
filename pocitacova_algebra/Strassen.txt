@@ -1,0 +1,34 @@
+def Strassen(A,B):
+    C = StrassenRek(A,B)
+    k = A.nrows()
+    return C if k % 2 == 0 else matrix([[C[j][i] for i in range(k)] for j in range(k)])
+def StrassenRek(A,B):
+    if A.nrows() == 1 and B.nrows()==1:
+        return matrix([A[0][0]*B[0][0]])
+    k = A.nrows()
+    if k % 2 == 1:
+        A = matrix([[(0 if (i == k or j == k) else A[j][i]) for i in range(k+1)] for j in range(k+1)])
+        B = matrix([[(0 if (i == k or j == k) else B[j][i]) for i in range(k+1)] for j in range(k+1)])
+        k+=1
+    A11 = matrix([[A[j][i] for i in range(k//2)] for j in range(k//2)])
+    A12 = matrix([[A[j][i] for i in range(k//2,k)] for j in range(k//2)])
+    A21 = matrix([[A[j][i] for i in range(k//2)] for j in range(k//2,k)])
+    A22 = matrix([[A[j][i] for i in range(k//2,k)] for j in range(k//2,k)])
+    B11 = matrix([[B[j][i] for i in range(k//2)] for j in range(k//2)])
+    B12 = matrix([[B[j][i] for i in range(k//2,k)] for j in range(k//2)])
+    B21 = matrix([[B[j][i] for i in range(k//2)] for j in range(k//2,k)])
+    B22 = matrix([[B[j][i] for i in range(k//2,k)] for j in range(k//2,k)])
+    M1 = StrassenRek(A11 + A22,B11+B22)
+    M2 = StrassenRek(A21 + A22,B11)
+    M3 = StrassenRek(A11,B12-B22)
+    M4 = StrassenRek(A22,B21-B11)
+    M5 = StrassenRek(A11 + A12,B22)
+    M6 = StrassenRek(A21 - A11,B11+B12)
+    M7 = StrassenRek(A12 - A22,B21+B22)
+    C11 = M1+M4-M5+M7
+    C12 = M3+M5
+    C21 = M2+M4
+    C22 = M1-M2+M3+M6
+    return block_matrix([[C11,C12],[C21,C22]], subdivide=False)
+print(Strassen(matrix([[1,2,3],[1,2,3],[1,2,3]]),matrix([[1,2,3],[1,2,3],[1,2,3]])))
+        
